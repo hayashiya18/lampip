@@ -3,7 +3,7 @@
 [![image](https://img.shields.io/pypi/l/lampip)](https://python.org/pypi/lampip)
 [![image](https://img.shields.io/pypi/v/lampip)](https://python.org/pypi/lampip)
 [![image](https://img.shields.io/pypi/pyversions/lampip)](https://python.org/pypi/lampip)
-[![image](https://img.shields.io/github/workflow/status/hayashiya18/lampip/python-package)](https://github.com/hayashiya18/lampip/actions/workflows/python-package.yml)
+[![image](https://github.com/hayashiya18/lampip/actions/workflows/python-package.yml/badge.svg)](https://github.com/hayashiya18/lampip/actions/workflows/python-package.yml)
 
 ---
 
