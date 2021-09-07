@@ -1,0 +1,4 @@
+[lampip.config]
+layername = "lampip-test"
+description = "for lampip test"
+pyversions = ["3.8", "3.7", "3.6"]
