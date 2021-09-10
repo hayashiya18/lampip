@@ -11,6 +11,10 @@
 
 - Build Python(3.6, 3.7, 3.8)-compatible custom lambda layers using Docker and pip, and push it to AWS.
 
+- Reduce the package size using some approachs.
+  - [Byte-Compile](https://docs.python.org/3.8/library/compileall.html) (that remove source comments and docstrings).
+  - Remove `*.dist-info`.
+
 ## Requirements
 
 - Python3
@@ -56,7 +60,7 @@ Go to the generated directory
 ```console
 $ cd science
 $ ls
-requirements.txt  lampip-config.toml
+lampip-config.toml  other_resources  requirements.txt
 ```
 
 Edit `requirements.txt`
@@ -70,10 +74,19 @@ pandas
 Edit `lampip-config.toml`
 
 ```toml
-[lampip.config]
+[lampip]
 layername = "science"
 description = "numpy, scipy, and pandas"
-pyversions = ["3.8", "3.7", "3.6"]
+pyversions = ["3.6", "3.7", "3.8"]
+
+[lampip.shrink]
+compile = true
+compile_optimize_level = 2
+remove_dist_info = true
+
+# [lampip.shrink.plotly]
+# remove_jupyterlab_plotly = true
+# remove_data_docs = true
 ```
 
 Before you deploy the lambda layer, be sure you have AWS credentials configured.
@@ -102,6 +115,19 @@ Deploy
 
 ```console
 $ lampip deploy
+Start to make dist/science_1631253196_3.6.zip
+...
+Publish the custom layer: arn:aws:lambda:ap-northeast-1:XXXXXXXXXXXX:layer:science-py38:1
+DONE: dist/science_1631253312_3.8.zip created
+
+$ ls -lh dist
+-rw-r--r-- 1 root root 68M  9月 10 23:53 science_1631253196_3.6.zip
+-rw-r--r-- 1 root root 73M  9月 10 23:54 science_1631253254_3.7.zip
+-rw-r--r-- 1 root root 73M  9月 10 23:55 science_1631253312_3.8.zip
+
+
+(The --no-upload option suppress uploading zip files)
+$ lampip deploy --no-upload
 ```
 
 Then you can check deployed layers on AWS Console.
