@@ -12,7 +12,11 @@ class TestWorkspace:
         assert isinstance(ws, Workspace)
         workdir = op.join(".", layer_name)
         assert op.exists(workdir)
-        assert set(os.listdir(workdir)) == {"lampip-config.toml", "requirements.txt"}
+        assert set(os.listdir(workdir)) == {
+            "lampip-config.toml",
+            "requirements.txt",
+            "other_resources",
+        }
         with open(op.join(workdir, "lampip-config.toml"), "rt") as fp:
             assert (
                 fp.read()

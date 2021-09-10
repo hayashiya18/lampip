@@ -19,6 +19,9 @@ class Workspace:
         Files
         - requirements.txt: empty file
         - lampip-config.toml
+        - other_layer_resources/bin
+        - other_layer_resources/lib
+        - other_layer_resources/python
 
         """
         validate_layername(layername)
@@ -33,10 +36,21 @@ class Workspace:
         # lampip-config.toml
         with open(op.join(directory, "lampip-config.toml"), "wt") as fp:
             fp.write(LAMPIP_CONFIG_TOML_TEMPLATE.substitute(layername=layername))
+        # other_resources/bin
+        # other_resources/lib
+        # other_resources/python
+        os.makedirs(op.join(directory, "other_resources", "bin"))
+        os.makedirs(op.join(directory, "other_resources", "lib"))
+        os.makedirs(op.join(directory, "other_resources", "python"))
+
         print(
             f"+ {op.join(directory, 'requirements.txt')}\n"
-            f"+ {op.join(directory, 'lampip-confing.toml')}"
+            f"+ {op.join(directory, 'lampip-confing.toml')}\n"
+            f"+ {op.join(directory, 'other_resources', 'bin')}\n"
+            f"+ {op.join(directory, 'other_resources', 'lib')}\n"
+            f"+ {op.join(directory, 'other_resources', 'python')}"
         )
+
         return cls(directory, layername)
 
     @classmethod

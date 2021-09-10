@@ -39,7 +39,11 @@ def test_entrypoint(tmpdir, task_using_aws_resource):  # noqa
     # $ cd lampip-test-entrypoint
     os.chdir(workdir)
 
-    assert set(os.listdir(".")) == {"lampip-config.toml", "requirements.txt"}
+    assert set(os.listdir(".")) == {
+        "lampip-config.toml",
+        "requirements.txt",
+        "other_resources",
+    }
 
     # $ vim lampip-config.toml
     newbuf = """\

@@ -1,7 +1,9 @@
 import hashlib
 import os
 import os.path as op
+import shutil
 import sys
+from tempfile import TemporaryDirectory
 
 import boto3
 import sh
@@ -38,12 +40,17 @@ def _target_zip_basename(layername: str, ver: str) -> str:
 def _build_cmd(zipbasename, cfg: Config):
     chains = []
 
+    # ==========================================
+    # COPY files on /volumepoint/other_resources
+    # ==========================================
+    chains.extend(["(test -d /other_resources && cp -RT /other_resources . || echo)"])
+
     # ===========
     # PIP INSTALL
     # ===========
     chains.extend(
         [
-            "mkdir python",
+            "mkdir -p python",
             "pip3 install --no-cache-dir -r /volumepoint/requirements.txt -t python",
             "cd python",
         ]
@@ -90,7 +97,7 @@ def _build_cmd(zipbasename, cfg: Config):
         [
             "cd ..",
             "mkdir -p /volumepoint/dist",
-            f"zip -r9 /volumepoint/dist/{zipbasename} .",
+            f"zip -r9 --quiet /volumepoint/dist/{zipbasename} .",
         ]
     )
 
@@ -103,17 +110,26 @@ def _make_package(zipbasename: str, ver: str, cfg: Config):
     if op.exists(op.join("dist", zipbasename)):
         print(f"SKIP: {op.join('dist', zipbasename)} already exists")
         return
-    curdir = op.abspath(os.curdir)
-    _docker(
-        "run",
-        "--rm",
-        "-v",
-        f"{curdir}:/volumepoint",
-        f"lambci/lambda:build-python{ver}",
-        "sh",
-        "-c",
-        _build_cmd(zipbasename, cfg),
-    )
+    with TemporaryDirectory() as tmpdir:
+        curdir = op.abspath(os.curdir)
+        # In order to follow symbolic links, copy files on ./other_resources to tmpdir
+        os.makedirs(op.join(curdir, "other_resources"), exist_ok=True)
+        other_resources_copy_dir = op.join(tmpdir, "other_resources_copy_dir")
+        shutil.copytree(
+            op.join(curdir, "other_resources"), other_resources_copy_dir, symlinks=False
+        )
+        _docker(
+            "run",
+            "--rm",
+            "-v",
+            f"{curdir}:/volumepoint",
+            "-v",
+            f"{other_resources_copy_dir}:/other_resources",
+            f"lambci/lambda:build-python{ver}",
+            "sh",
+            "-c",
+            _build_cmd(zipbasename, cfg),
+        )
     print(f"DONE: {op.join('dist', zipbasename)} created")
 
 
