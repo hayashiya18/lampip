@@ -1,8 +1,7 @@
 import os.path as op
 
 import pytest
-from lampip.core.lampip_config import (LampipConfig, validate_layername,
-                                       validate_pyversions)
+from lampip.core.config import Config, validate_layername, validate_pyversions
 
 
 @pytest.mark.parametrize(
@@ -39,11 +38,16 @@ def test_validate_pyversions(pyversions, is_valid):
             validate_pyversions(pyversions)
 
 
-class TestLampipConfig:
-    def test_load_toml(self, tests_dir):
-        config = LampipConfig.load_toml(
-            op.join(tests_dir, "workspaces", "lampip-test", "lampip-config.toml")
+class TestConfig:
+    @pytest.mark.parametrize(
+        "workspacename",
+        [
+            "lampip-test01",
+            "lampip-test02",
+        ],
+    )
+    def test_load_toml(self, tests_dir, workspacename):
+        config = Config.load_toml(
+            op.join(tests_dir, "workspaces", workspacename, "lampip-config.toml")
         )
-        print(config)
-        assert config.layername == "lampip-test"
-        assert set(config.pyversions) == {"3.8", "3.7", "3.6"}
+        assert isinstance(config, Config)

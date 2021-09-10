@@ -17,9 +17,18 @@ class TestWorkspace:
             assert (
                 fp.read()
                 == """\
-[lampip.config]
+[lampip]
 layername = "my-custom-layer"
 description = ""
-pyversions = ["3.8", "3.7", "3.6"]
+pyversions = ["3.6", "3.7", "3.8"]
+
+[lampip.shrink]
+compile = true
+compile_optimize_level = 2
+remove_dist_info = true
+
+[lampip.shrink.plotly]
+remove_jupyterlab_plotly = true
+remove_data_docs = true
 """
             )

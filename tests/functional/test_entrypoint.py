@@ -40,24 +40,18 @@ def test_entrypoint(tmpdir, task_using_aws_resource):  # noqa
     os.chdir(workdir)
 
     assert set(os.listdir(".")) == {"lampip-config.toml", "requirements.txt"}
-    with open("lampip-config.toml", "rt") as fp:
-        buf = fp.read()
-    assert (
-        buf
-        == """\
-[lampip.config]
-layername = "lampip-test-entrypoint"
-description = ""
-pyversions = ["3.8", "3.7", "3.6"]
-"""
-    )
 
     # $ vim lampip-config.toml
     newbuf = """\
-[lampip.config]
+[lampip]
 layername = "lampip-test-entrypoint"
 description = "lampip-test-entrypoint"
 pyversions = ["3.8"]
+
+[lampip.shrink]
+compile = true
+compile_optimize_level = 2
+remove_dist_info = true
 """
     with open("lampip-config.toml", "wt") as fp:
         fp.write(newbuf)

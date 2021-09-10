@@ -3,9 +3,8 @@ import os.path as op
 
 from termcolor import cprint
 
-from .lampip_config import (LAMPIP_CONFIG_TOML_TEMPLATE, LampipConfig,
-                            validate_layername)
-from .package import make_package, upload_package
+from .config import LAMPIP_CONFIG_TOML_TEMPLATE, Config, validate_layername
+from .package import deploy_package
 
 
 class Workspace:
@@ -43,13 +42,10 @@ class Workspace:
     @classmethod
     def load_directory(cls, directory: str) -> "Workspace":
         os.chdir(directory)
-        config = LampipConfig.load_toml(op.join(directory, "lampip-config.toml"))
+        config = Config.load_toml(op.join(directory, "lampip-config.toml"))
         return cls(directory, config.layername)
 
     def deploy(self, upload_also=True):
         """Build and upload the lambda custom layer."""
-        config = LampipConfig.load_toml(op.join(self.directory, "lampip-config.toml"))
-        for ver in config.pyversions:
-            make_package(config.layername, ver)
-            if upload_also:
-                upload_package(config.layername, ver, config.description)
+        config = Config.load_toml(op.join(self.directory, "lampip-config.toml"))
+        deploy_package(config, upload_also)
