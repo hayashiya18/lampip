@@ -1,8 +1,8 @@
-import hashlib
 import os
 import os.path as op
 import shutil
 import sys
+from datetime import datetime
 from tempfile import TemporaryDirectory
 
 import boto3
@@ -11,13 +11,6 @@ from termcolor import cprint
 
 from .cloudformation import get_cf_resources
 from .config import Config
-
-
-def _md5sum(filename: str) -> str:
-    m = hashlib.md5()
-    with open(filename, "rb") as fp:
-        m.update(fp.read())
-    return m.hexdigest()
 
 
 def _docker(*args):
@@ -34,7 +27,8 @@ def _docker(*args):
 
 
 def _target_zip_basename(layername: str, ver: str) -> str:
-    return layername + "_" + _md5sum("requirements.txt") + "_" + ver + ".zip"
+    ts = round(datetime.utcnow().timestamp())
+    return f"{layername}_{ts}_{ver}.zip"
 
 
 def _build_cmd(zipbasename, cfg: Config):
