@@ -1,62 +1,10 @@
 import os
 import os.path as op
-import re
-from string import Template
-from typing import Sequence
 
-import toml
 from termcolor import cprint
 
-from .package import make_package, upload_package
-
-LAMPIP_CONFIG_TOML_TEMPLATE = Template(
-    """\
-[lampip.config]
-layername = "${layername}"
-description = ""
-pyversions = ["3.8", "3.7", "3.6"]
-"""
-)
-
-
-def validate_layername(layername):
-    if not re.search(r"^[a-zA-Z0-9_-]+$", layername):
-        raise ValueError(
-            f"Invalid layername `{layername}`;"
-            " The layer name can contain only letters, numbers, hyphens, and underscores."
-        )
-    if len(layername) > 64 - 5:
-        raise ValueError(
-            f"Invalid layername `{layername}';" " The maximum length is 59 characters."
-        )
-
-
-def validate_pyversions(pyversions):
-    if len(pyversions) == 0:
-        raise ValueError("Invalid pyversions; pyversions should not be empty.")
-    if not set(pyversions) <= {"3.8", "3.7", "3.6"}:
-        raise ValueError(
-            f'Invalid pyversions {pyversions}; Supported pyversions are "3.6", "3.7", ".3.8" .'
-        )
-
-
-class LampipConfig:
-    def __init__(self, layername: str, pyversions: Sequence[str], description: str):
-        validate_layername(layername)
-        validate_pyversions(pyversions)
-        self.layername = layername
-        self.pyversions = pyversions
-        self.description = description
-
-    def __repr__(self):
-        return f"LampipConfig(layername={self.layername}, pyversions={self.pyversions})"
-
-    @classmethod
-    def load_toml(cls, toml_file: str):
-        with open(toml_file, "rt") as fp:
-            contents = toml.load(fp)
-        kargs = contents["lampip"]["config"]
-        return cls(**kargs)
+from .config import LAMPIP_CONFIG_TOML_TEMPLATE, Config, validate_layername
+from .package import deploy_package
 
 
 class Workspace:
@@ -71,6 +19,9 @@ class Workspace:
         Files
         - requirements.txt: empty file
         - lampip-config.toml
+        - other_layer_resources/bin
+        - other_layer_resources/lib
+        - other_layer_resources/python
 
         """
         validate_layername(layername)
@@ -85,22 +36,30 @@ class Workspace:
         # lampip-config.toml
         with open(op.join(directory, "lampip-config.toml"), "wt") as fp:
             fp.write(LAMPIP_CONFIG_TOML_TEMPLATE.substitute(layername=layername))
+        # other_resources/bin
+        # other_resources/lib
+        # other_resources/python
+        os.makedirs(op.join(directory, "other_resources", "bin"))
+        os.makedirs(op.join(directory, "other_resources", "lib"))
+        os.makedirs(op.join(directory, "other_resources", "python"))
+
         print(
             f"+ {op.join(directory, 'requirements.txt')}\n"
-            f"+ {op.join(directory, 'lampip-confing.toml')}"
+            f"+ {op.join(directory, 'lampip-confing.toml')}\n"
+            f"+ {op.join(directory, 'other_resources', 'bin')}\n"
+            f"+ {op.join(directory, 'other_resources', 'lib')}\n"
+            f"+ {op.join(directory, 'other_resources', 'python')}"
         )
+
         return cls(directory, layername)
 
     @classmethod
     def load_directory(cls, directory: str) -> "Workspace":
         os.chdir(directory)
-        config = LampipConfig.load_toml(op.join(directory, "lampip-config.toml"))
+        config = Config.load_toml(op.join(directory, "lampip-config.toml"))
         return cls(directory, config.layername)
 
     def deploy(self, upload_also=True):
         """Build and upload the lambda custom layer."""
-        config = LampipConfig.load_toml(op.join(self.directory, "lampip-config.toml"))
-        for ver in config.pyversions:
-            make_package(config.layername, ver)
-            if upload_also:
-                upload_package(config.layername, ver, config.description)
+        config = Config.load_toml(op.join(self.directory, "lampip-config.toml"))
+        deploy_package(config, upload_also)

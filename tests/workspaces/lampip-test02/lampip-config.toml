@@ -1,0 +1,13 @@
+[lampip]
+layername = "lampip-test"
+description = "for lampip test"
+pyversions = ["3.8"]
+
+[lampip.shrink]
+compile = true
+compile_optimize_level = 2
+remove_dist_info = true
+
+[lampip.shrink.plotly]
+remove_jupyterlab_plotly = true
+remove_data_docs = true

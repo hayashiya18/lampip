@@ -1,10 +1,12 @@
 [tool.poetry]
 name = "lampip"
-version = "0.1.2"
+version = "0.2.0"
 description = "Simple CLI tool for creating custom python lambda layers"
 authors = ["hayashiya18 <sei8haya@gmail.com>"]
 license = "MIT"
 repository = "https://github.com/hayashiya18/lampip"
+readme = "README.md"
+keywords = ["aws", "lambda", "layer"]
 
 [tool.poetry.dependencies]
 python = "^3.6"
@@ -13,6 +15,7 @@ sh = "*"
 toml = "*"
 termcolor = "*"
 boto3 = "*"
+dataclasses = {version = "*", python = ">=3.6,<3.7"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
