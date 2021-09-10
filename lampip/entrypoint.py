@@ -17,6 +17,7 @@ def new(layer_name: str):
 
 
 @main.command(help="Build and push lambda layer")
-def deploy():
+@click.option("--upload/--no-upload", default=True)
+def deploy(upload):
     ws = Workspace.load_directory(".")
-    ws.deploy()
+    ws.deploy(upload_also=upload)
