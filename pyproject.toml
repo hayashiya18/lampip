@@ -13,6 +13,7 @@ sh = "*"
 toml = "*"
 termcolor = "*"
 boto3 = "*"
+dataclasses = {version = "*", python = ">=3.6,<3.7"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
