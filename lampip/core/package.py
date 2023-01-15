@@ -114,12 +114,16 @@ def _make_package(zipbasename: str, ver: str, cfg: Config):
         )
         _docker(
             "run",
+            "--platform",
+            "linux/amd64",
             "--rm",
             "-v",
             f"{curdir}:/volumepoint",
             "-v",
             f"{other_resources_copy_dir}:/other_resources",
-            f"lambci/lambda:build-python{ver}",
+            f"lambci/lambda:build-python{ver}"
+            if ver != "3.9"
+            else f"mlupin/docker-lambda:python{ver}-build",
             "sh",
             "-c",
             _build_cmd(zipbasename, cfg),

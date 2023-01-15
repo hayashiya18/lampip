@@ -10,7 +10,7 @@ LAMPIP_CONFIG_TOML_TEMPLATE = Template(
 [lampip]
 layername = "${layername}"
 description = ""
-pyversions = ["3.6", "3.7", "3.8"]
+pyversions = ["3.7", "3.8", "3.9"]
 
 [lampip.shrink]
 compile = true
@@ -39,9 +39,9 @@ def validate_layername(layername):
 def validate_pyversions(pyversions):
     if len(pyversions) == 0:
         raise ValueError("Invalid pyversions; pyversions should not be empty.")
-    if not set(pyversions) <= {"3.8", "3.7", "3.6"}:
+    if not set(pyversions) <= {"3.9", "3.8", "3.7"}:
         raise ValueError(
-            f'Invalid pyversions {pyversions}; Supported pyversions are "3.6", "3.7", ".3.8" .'
+            f'Invalid pyversions {pyversions}; Supported pyversions are "3.7", "3.8", "3.9" .'
         )
 
 

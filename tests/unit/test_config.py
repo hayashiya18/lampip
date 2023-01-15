@@ -25,8 +25,8 @@ def test_validate_layername(layername, is_valid):
     "pyversions, is_valid",
     [
         (["3.8"], True),
-        (["3.6", "3.7", "3.8"], True),
-        (["2.7", "3.6"], False),
+        (["3.7", "3.8", "3.9"], True),
+        (["2.7", "3.7"], False),
         ([], False),
     ],
 )
