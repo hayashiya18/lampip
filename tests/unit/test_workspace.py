@@ -24,7 +24,7 @@ class TestWorkspace:
 [lampip]
 layername = "my-custom-layer"
 description = ""
-pyversions = ["3.6", "3.7", "3.8"]
+pyversions = ["3.7", "3.8", "3.9"]
 
 [lampip.shrink]
 compile = true

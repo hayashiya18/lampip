@@ -9,7 +9,7 @@
 
 ## Features
 
-- Build Python(3.6, 3.7, 3.8)-compatible custom lambda layers using Docker and pip, and push it to AWS.
+- Build Python(3.7, 3.8, 3.9)-compatible custom lambda layers using Docker and pip, and push it to AWS.
 
 - Reduce the package size using some approachs.
   - [Byte-Compile](https://docs.python.org/3.8/library/compileall.html) (that remove source comments and docstrings).
@@ -77,7 +77,7 @@ Edit `lampip-config.toml`
 [lampip]
 layername = "science"
 description = "numpy, scipy, and pandas"
-pyversions = ["3.6", "3.7", "3.8"]
+pyversions = ["3.7", "3.8", "3.9"]
 
 [lampip.shrink]
 compile = true
@@ -115,15 +115,15 @@ Deploy
 
 ```console
 $ lampip deploy
-Start to make dist/science_1631253196_3.6.zip
+Start to make dist/science_1631253196_3.7.zip
 ...
 Publish the custom layer: arn:aws:lambda:ap-northeast-1:XXXXXXXXXXXX:layer:science-py38:1
 DONE: dist/science_1631253312_3.8.zip created
 
 $ ls -lh dist
--rw-r--r-- 1 root root 68M  9月 10 23:53 science_1631253196_3.6.zip
 -rw-r--r-- 1 root root 73M  9月 10 23:54 science_1631253254_3.7.zip
 -rw-r--r-- 1 root root 73M  9月 10 23:55 science_1631253312_3.8.zip
+...
 
 
 (The --no-upload option suppress uploading zip files)
